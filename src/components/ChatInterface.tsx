@@ -4,7 +4,13 @@ import { MessageList } from "@/components/MessageList";
 import { MessageInput } from "@/components/MessageInput";
 import { ChatHeader } from "@/components/ChatHeader";
 import { TokenDisplay } from "@/components/TokenDisplay";
-import { generateAIResponse } from "@/services/geminiService";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  generateAIResponse,
+  ChatMode,
+  CHAT_MODES,
+} from "@/services/geminiService";
+import { Bot, Search, Ghost } from "lucide-react";
 import { toast } from "sonner";
 import { Chat, Message } from "@/types/chat";
 import { chatStorage } from "@/utils/chatStorage";
@@ -26,6 +32,7 @@ export const ChatInterface = ({
   const { user } = useUser();
   const [messages, setMessages] = useState<Message[]>(currentChat.messages);
   const [isLoading, setIsLoading] = useState(false);
+  const [mode, setMode] = useState<ChatMode>("CHAT");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
 
@@ -70,9 +77,9 @@ export const ChatInterface = ({
       messages: updatedMessages,
       lastMessageAt: new Date(),
       title:
-        (currentChat.title === "New Chat" ||
-          currentChat.title === "🎯 New Chat" ||
-          currentChat.title === "🔒 New Secret Chat") &&
+        (currentChat.title === "New Request" ||
+          currentChat.title === "🎯 New Request" ||
+          currentChat.title === "🔒 New Secret Request") &&
         updatedMessages.length > 0
           ? generateChatTitle(updatedMessages)
           : currentChat.title,
@@ -93,7 +100,7 @@ export const ChatInterface = ({
         (firstUserMessage.text.split(" ").length > 4 ? "..." : "")
       );
     }
-    return "🔒 New Secret Chat";
+    return "🔒 New Secret Request";
   };
 
   const handleSendMessage = async (text: string) => {
@@ -102,10 +109,11 @@ export const ChatInterface = ({
       return;
     }
 
-    // Check if user has enough tokens
     const tokens = getUserTokens(user.id);
-    if (tokens.remaining < 10) {
-      toast.error("🔒 Insufficient tokens! Please upgrade to continue.");
+    const tokenCost = mode === "CHAT" ? 5 : mode === "SEARCH" ? 15 : 10;
+
+    if (tokens.remaining < tokenCost) {
+      toast.error(`🔒 Insufficient tokens! (${tokenCost} required)`);
       return;
     }
 
@@ -120,22 +128,23 @@ export const ChatInterface = ({
     setMessages(newMessages);
     updateChatInStorage(newMessages);
 
-    setTimeout(() => scrollToBottom("instant"), 10);
-
     setIsLoading(true);
 
     try {
-      // Deduct tokens before making the request
-      const tokenDeducted = deductTokens(user.id);
+      const tokenDeducted = deductTokens(user.id, tokenCost);
       if (!tokenDeducted) {
-        toast.error("🔒 Insufficient tokens! Please upgrade to continue.");
+        toast.error(`🔒 Insufficient tokens! (${tokenCost} required)`);
         setIsLoading(false);
         return;
       }
 
-      console.log("Sending message to SECRET AI:", text);
-      const aiResponse = await generateAIResponse(text);
-      console.log("Received response from SECRET AI:", aiResponse);
+      // Convert recent messages for context
+      const recentContext = messages.slice(-6).map((m) => ({
+        role: m.sender as "user" | "assistant",
+        content: m.text,
+      }));
+
+      const aiResponse = await generateAIResponse(text, mode, recentContext);
 
       const aiMessage: Message = {
         id: "ai-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9),
@@ -148,15 +157,15 @@ export const ChatInterface = ({
       setMessages(finalMessages);
       updateChatInStorage(finalMessages);
 
-      toast.success("🔒 10 tokens deducted");
+      toast.success(`🔒 ${tokenCost} tokens deducted`);
     } catch (error) {
-      console.error("Error sending message:", error);
-      toast.error("🔒 Failed to get AI response. Please try again.");
+      console.error("Error:", error);
+      toast.error("🔒 Failed to get AI response");
 
       const errorMessage: Message = {
         id:
           "error-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9),
-        text: "🔒 I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+        text: "🔒 I apologize, I'm having trouble responding right now. Please try again.",
         sender: "ai",
         timestamp: new Date(),
       };
@@ -177,11 +186,34 @@ export const ChatInterface = ({
   };
 
   return (
-    <div className="h-150 flex flex-col">
+    <div className="h-[calc(100vh-12rem)] flex flex-col">
       <ChatHeader onClearChat={handleClearChat} />
 
+      {/* Mode Selector */}
+      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800">
+        <Tabs value={mode} onValueChange={(value: ChatMode) => setMode(value)}>
+          <TabsList>
+            <TabsTrigger value="CHAT" className="flex items-center gap-2">
+              <Bot className="w-4 h-4" />
+              Convo Mode
+              <span className="ml-1 text-xs text-gray-400">(5)</span>
+            </TabsTrigger>
+            <TabsTrigger value="SEARCH" className="flex items-center gap-2">
+              <Search className="w-4 h-4" />
+              Research Mode
+              <span className="ml-1 text-xs text-gray-400">(15)</span>
+            </TabsTrigger>
+            <TabsTrigger value="GHOST" className="flex items-center gap-2">
+              <Ghost className="w-4 h-4" />
+              Ghost Mode
+              <span className="ml-1 text-xs text-gray-400">(10)</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       <div className="px-4 py-2">
-        <TokenDisplay />
+        <TokenDisplay mode={mode} />
       </div>
 
       <div className="flex-1 overflow-hidden" ref={messageListRef}>
@@ -193,10 +225,15 @@ export const ChatInterface = ({
           currentChatTitle={currentChat.title}
           onNotesUpdate={onNotesUpdate}
         />
-        <div ref={messagesEndRef} className="h-1" />
+        <div ref={messagesEndRef} />
       </div>
 
-      <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} />
+      <MessageInput
+        onSendMessage={handleSendMessage}
+        disabled={isLoading}
+        mode={mode}
+        theme={theme}
+      />
     </div>
   );
 };

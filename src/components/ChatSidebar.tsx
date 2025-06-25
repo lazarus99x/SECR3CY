@@ -23,8 +23,6 @@ import {
   FileText,
   Target,
   Lock,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NoteEditor } from "@/components/NoteEditor";
@@ -63,7 +61,6 @@ export const ChatSidebar = ({
   const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [isChatsOpen, setIsChatsOpen] = useState(true);
   const [isCompetitorOpen, setIsCompetitorOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     loadNotes();
@@ -128,7 +125,7 @@ export const ChatSidebar = ({
   };
 
   const formatChatTitle = (chat: Chat) => {
-    if (chat.title !== "New Chat" && chat.title !== "🎯 New Chat")
+    if (chat.title !== "New Query" && chat.title !== "🎯 New Query")
       return chat.title;
     const firstUserMessage = chat.messages.find((m) => m.sender === "user");
     if (firstUserMessage) {
@@ -137,7 +134,7 @@ export const ChatSidebar = ({
         (firstUserMessage.text.length > 30 ? "..." : "")
       );
     }
-    return "🎯 New Chat";
+    return "🎯 New Query";
   };
 
   const sortedChats = [...chats].sort((a, b) => {
@@ -152,34 +149,17 @@ export const ChatSidebar = ({
 
   return (
     <>
-      <Sidebar
-        className={`transition-all duration-300 border-r-2 border-purple-100 dark:border-purple-900 ${
-          isCollapsed ? "w-16" : "w-80"
-        }`}
-      >
-        {/* Collapse Button */}
-        <div className="flex justify-end p-2">
-          <button
-            onClick={() => setIsCollapsed((prev) => !prev)}
-            className="rounded-full p-1 hover:bg-accent transition"
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isCollapsed ? (
-              <ChevronRight size={20} />
-            ) : (
-              <ChevronLeft size={20} />
-            )}
-          </button>
-        </div>
+      <Sidebar className="w-80 border-r-2 border-purple-100 dark:border-purple-900">
         <SidebarHeader className="p-4 space-y-2">
           <Button
             onClick={onNewChat}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
-            {!isCollapsed && <span>💬 New Chat</span>}
+            🎯 New Query
           </Button>
         </SidebarHeader>
+
         <SidebarContent className="space-y-2">
           {/* Chats Section */}
           <SidebarGroup>
@@ -187,12 +167,8 @@ export const ChatSidebar = ({
               <CollapsibleTrigger asChild>
                 <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md p-2">
                   <div className="flex items-center">
-                    {isCollapsed ? (
-                      <span className="text-lg">🕵️</span>
-                    ) : (
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                    )}
-                    {!isCollapsed && <span>💬 Chats ({chats.length})</span>}
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    🔒 Queries ({chats.length})
                   </div>
                 </SidebarGroupLabel>
               </CollapsibleTrigger>
@@ -212,50 +188,42 @@ export const ChatSidebar = ({
                           >
                             <div className="flex items-center flex-1 min-w-0">
                               <MessageSquare className="w-3 h-3 mr-2 flex-shrink-0" />
-                              {!isCollapsed && (
-                                <span className="truncate flex-1 text-xs sm:text-sm">
-                                  {formatChatTitle(chat)}
-                                </span>
-                              )}
-                              {chat.isPinned && !isCollapsed && (
+                              <span className="truncate flex-1 text-xs sm:text-sm">
+                                {formatChatTitle(chat)}
+                              </span>
+                              {chat.isPinned && (
                                 <Pin className="w-3 h-3 ml-1 text-yellow-500 fill-current" />
                               )}
                             </div>
-                            {!isCollapsed && (
-                              <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                <button
-                                  onClick={(e) => handleRenameChat(chat.id, e)}
-                                  className="p-1 hover:bg-background rounded"
-                                  title="🎯 Rename chat"
-                                >
-                                  <Edit3 className="w-3 h-3" />
-                                </button>
-                                <button
-                                  onClick={(e) => handlePinChat(chat.id, e)}
-                                  className="p-1 hover:bg-background rounded"
-                                  title={
-                                    chat.isPinned
-                                      ? "🔒 Unpin chat"
-                                      : "🎯 Pin chat"
-                                  }
-                                >
-                                  <Pin
-                                    className={`w-3 h-3 ${
-                                      chat.isPinned
-                                        ? "text-yellow-500 fill-current"
-                                        : ""
-                                    }`}
-                                  />
-                                </button>
-                                <button
-                                  onClick={(e) => handleDeleteChat(chat.id, e)}
-                                  className="p-1 hover:bg-background rounded text-red-500"
-                                  title="🔒 Delete chat"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </button>
-                              </div>
-                            )}
+                            <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                              <button
+                                onClick={(e) => handleRenameChat(chat.id, e)}
+                                className="p-1 hover:bg-background rounded"
+                                title="🎯 Rename Query"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                              </button>
+                              <button
+                                onClick={(e) => handlePinChat(chat.id, e)}
+                                className="p-1 hover:bg-background rounded"
+                                title={
+                                  chat.isPinned
+                                    ? "🔒 Unpin chat"
+                                    : "🎯 Pin chat"
+                                }
+                              >
+                                <Pin
+                                  className={`w-3 h-3 ${chat.isPinned ? "text-yellow-500 fill-current" : ""}`}
+                                />
+                              </button>
+                              <button
+                                onClick={(e) => handleDeleteChat(chat.id, e)}
+                                className="p-1 hover:bg-background rounded text-red-500"
+                                title="🔒 Delete Queries"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -272,12 +240,8 @@ export const ChatSidebar = ({
               <CollapsibleTrigger asChild>
                 <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md p-2">
                   <div className="flex items-center">
-                    {isCollapsed ? (
-                      <span className="text-lg">🗒️</span>
-                    ) : (
-                      <FileText className="w-4 h-4 mr-2" />
-                    )}
-                    {!isCollapsed && <span>📝 Notes ({notes.length})</span>}
+                    <FileText className="w-4 h-4 mr-2" />
+                    🎯 Pinned Notes ({notes.length})
                   </div>
                 </SidebarGroupLabel>
               </CollapsibleTrigger>
@@ -289,40 +253,34 @@ export const ChatSidebar = ({
                         <div className="p-2 border rounded-md bg-card/50 hover:bg-card transition-colors">
                           <div className="flex items-start justify-between mb-2">
                             <h4 className="font-medium text-xs sm:text-sm truncate flex-1">
-                              {!isCollapsed && note.title}
+                              {note.title}
                             </h4>
-                            {!isCollapsed && (
-                              <div className="flex items-center ml-2">
-                                <button
-                                  onClick={() => handleEditNote(note.id)}
-                                  className="p-1 hover:bg-background rounded"
-                                  title="🎯 Edit note"
-                                >
-                                  <Edit3 className="w-3 h-3" />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteNote(note.id)}
-                                  className="p-1 hover:bg-background rounded text-red-500"
-                                  title="🔒 Delete note"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </button>
-                              </div>
-                            )}
+                            <div className="flex items-center ml-2">
+                              <button
+                                onClick={() => handleEditNote(note.id)}
+                                className="p-1 hover:bg-background rounded"
+                                title="🎯 Edit note"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteNote(note.id)}
+                                className="p-1 hover:bg-background rounded text-red-500"
+                                title="🔒 Delete note"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
-                          {!isCollapsed && (
-                            <>
-                              <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
-                                {note.content}
-                              </p>
-                              <div className="flex items-center justify-between">
-                                <Badge variant="outline" className="text-xs">
-                                  {note.createdAt.toLocaleDateString()}
-                                </Badge>
-                                <NoteExportButtons note={note} />
-                              </div>
-                            </>
-                          )}
+                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                            {note.content}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-xs">
+                              {note.createdAt.toLocaleDateString()}
+                            </Badge>
+                            <NoteExportButtons note={note} />
+                          </div>
                         </div>
                       </SidebarMenuItem>
                     ))}
@@ -341,21 +299,15 @@ export const ChatSidebar = ({
               <CollapsibleTrigger asChild>
                 <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md p-2">
                   <div className="flex items-center">
-                    {isCollapsed ? (
-                      <span className="text-lg">🧩</span>
-                    ) : (
-                      <Target className="w-4 h-4 mr-2" />
-                    )}
-                    {!isCollapsed && <span>🧠 Analyzer</span>}
+                    <Target className="w-4 h-4 mr-2" />
+                    🎯 Competitor Analyzer
                     <Lock className="w-3 h-3 ml-2 text-gray-400" />
                   </div>
                 </SidebarGroupLabel>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarGroupContent>
-                  {!isCollapsed && (
-                    <CompetitorAnalyzer onNotesUpdate={handleNotesRefresh} />
-                  )}
+                  <CompetitorAnalyzer onNotesUpdate={handleNotesRefresh} />
                 </SidebarGroupContent>
               </CollapsibleContent>
             </Collapsible>
@@ -363,15 +315,12 @@ export const ChatSidebar = ({
         </SidebarContent>
 
         <SidebarFooter className="p-4">
-          {!isCollapsed && (
-            <div className="text-xs text-muted-foreground text-center space-y-1">
-              <div>
-                {isCollapsed ? "" : "💬"} {chats.length} chats •{" "}
-                {isCollapsed ? "" : "📝"} {notes.length} notes
-              </div>
-              <div className="text-purple-500">Secure & Minimal Design</div>
+          <div className="text-xs text-muted-foreground text-center space-y-1">
+            <div>
+              🔒 {chats.length} chats • 🎯 {notes.length} notes
             </div>
-          )}
+            <div className="text-purple-500">Secure & Minimal Design</div>
+          </div>
         </SidebarFooter>
       </Sidebar>
 

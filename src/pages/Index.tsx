@@ -200,11 +200,10 @@ const Index = () => {
           </div>
           <p
             className={`flex items-center justify-center gap-2 text-lg font-mono transition-colors duration-300 ${
-              theme === "dark" ? "text-cyan-400" : "text-blue-600"
+              theme === "dark" ? "text-cyan-200" : "text-blue-400"
             }`}
           >
-            <Target className="w-5 h-5 " />
-            🔒 Initializing SECRECY...
+            🔒 Initializing SECR3CY...
           </p>
         </div>
       </div>
@@ -267,12 +266,11 @@ const Index = () => {
                   </div>
                 </div>
                 <p
-                  className={`flex items-center justify-center gap-2 text-lg font-mono transition-colors duration-300 ${
+                  className={` items-center justify-center font-mono transition-colors duration-300 ${
                     theme === "dark" ? "text-cyan-400" : "text-blue-600"
                   }`}
                 >
-                  <Target className="w-5 h-5 " />
-                  🔒 INITIALIZING SECRECY...
+                  🔒 INITIALIZING SECR3CY...
                 </p>
               </div>
             </div>
