@@ -36,7 +36,7 @@ export const ChatHeader = ({ onClearChat }: ChatHeaderProps) => {
             size="sm"
             className="text-gray-600 dark:text-gray-400 hover:bg-white/10 dark:hover:bg-gray-800/10 hover:text-cyan-400 transition-colors"
           >
-            🔒 Clear Chat
+            🔒 Clear Queries
           </Button>
 
           <Button

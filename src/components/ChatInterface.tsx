@@ -186,7 +186,7 @@ export const ChatInterface = ({
   };
 
   return (
-    <div className="h-[calc(100vh-12rem)] flex flex-col">
+    <div className="h-[calc(100vh-7rem)] flex flex-col">
       <ChatHeader onClearChat={handleClearChat} />
 
       {/* Mode Selector */}
