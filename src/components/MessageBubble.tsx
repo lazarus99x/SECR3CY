@@ -88,8 +88,9 @@ export const MessageBubble = ({
           {/* Main Avatar */}
 
           <svg
-            width="36"
-            height="36"
+            width="30"
+            height="30"
+            className="sm:w-[36px] sm:h-[36px]"
             viewBox="0 0 36 36"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -136,9 +137,9 @@ export const MessageBubble = ({
           <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words">
             {message.text}
           </p>
-          <div className="flex items-center justify-between mt-2 gap-2">
+          <div className="flex items-center justify-between mt-1 sm:mt-2 gap-2">
             <p
-              className={`text-xs opacity-70 ${isUser ? "text-white/80" : "text-gray-500 dark:text-gray-400"}`}
+              className={`text-[10px] sm:text-xs opacity-70 ${isUser ? "text-white/80" : "text-gray-500 dark:text-gray-400"}`}
             >
               {formatTime(message.timestamp)}
             </p>
@@ -150,16 +151,16 @@ export const MessageBubble = ({
               onClick={handlePinToNote}
               disabled={isPinning}
               className={`
-                opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 h-auto text-xs sm:text-sm
+                opacity-0 group-hover:opacity-100 transition-all duration-200 p-0.5 sm:p-1 h-auto text-xs sm:text-sm
                 hover:bg-white/10 dark:hover:bg-gray-700/30 hover:shadow-lg
                 ${isPinning ? "opacity-100 animate-pulse" : ""}
               `}
               title="🔒 Pin to Secret Notes"
             >
               {isPinning ? (
-                <Target className="w-3 h-3 animate-spin text-cyan-400" />
+                <Target className="w-2 h-2 sm:w-3 sm:h-3 animate-spin text-cyan-400" />
               ) : (
-                <Pin className="w-3 h-3 hover:text-cyan-400 transition-colors" />
+                <Pin className="w-2 h-2 sm:w-3 sm:h-3 hover:text-cyan-400 transition-colors" />
               )}
             </Button>
           </div>

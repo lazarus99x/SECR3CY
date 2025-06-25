@@ -34,24 +34,24 @@ export const TokenDisplay = () => {
   const isOutOfTokens = tokens.remaining < 10;
 
   return (
-    <Card className="p-3 bg-gray-900/50 border-gray-700">
+    <Card className="p-2 sm:p-3 bg-gray-900/50 border-gray-700">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Coins
-            className={`w-4 h-4 ${isOutOfTokens ? "text-red-500" : isLowTokens ? "text-yellow-500" : "text-green-500"}`}
+            className={`w-3 h-3 sm:w-4 sm:h-4 ${isOutOfTokens ? "text-red-500" : isLowTokens ? "text-yellow-500" : "text-green-500"}`}
           />
-          <span className="text-sm font-medium text-gray-300">
+          <span className="text-xs sm:text-sm font-medium text-gray-300">
             Tokens: {tokens.remaining.toLocaleString()}
           </span>
         </div>
 
         {isLowTokens && (
           <div className="flex items-center gap-1">
-            <AlertTriangle className="w-4 h-4 text-yellow-500" />
+            <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
             <Button
               size="sm"
               variant="outline"
-              className="text-xs h-6 px-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
+              className="text-xs h-5 sm:h-6 px-1 sm:px-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
             >
               Upgrade
             </Button>

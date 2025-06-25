@@ -149,13 +149,13 @@ export const ChatSidebar = ({
 
   return (
     <>
-      <Sidebar className="w-80 border-r-2 border-purple-100 dark:border-purple-900">
-        <SidebarHeader className="p-4 space-y-2">
+      <Sidebar className="w-64 sm:w-80 border-r-2 border-purple-100 dark:border-purple-900">
+        <SidebarHeader className="p-2 sm:p-4 space-y-2">
           <Button
             onClick={onNewChat}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs sm:text-sm"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             🎯 New Query
           </Button>
         </SidebarHeader>
@@ -165,10 +165,12 @@ export const ChatSidebar = ({
           <SidebarGroup>
             <Collapsible open={isChatsOpen} onOpenChange={setIsChatsOpen}>
               <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md p-2">
+                <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md p-1 sm:p-2">
                   <div className="flex items-center">
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    🔒 Queries ({chats.length})
+                    <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="text-xs sm:text-sm">
+                      🔒 Queries ({chats.length})
+                    </span>
                   </div>
                 </SidebarGroupLabel>
               </CollapsibleTrigger>
@@ -184,45 +186,42 @@ export const ChatSidebar = ({
                         >
                           <div
                             onClick={() => onChatSelect(chat.id)}
-                            className="flex items-center justify-between w-full p-2 cursor-pointer hover:bg-accent rounded-md transition-colors"
+                            className="flex items-center justify-between w-full p-1 sm:p-2 cursor-pointer hover:bg-accent rounded-md transition-colors"
                           >
                             <div className="flex items-center flex-1 min-w-0">
-                              <MessageSquare className="w-3 h-3 mr-2 flex-shrink-0" />
-                              <span className="truncate flex-1 text-xs sm:text-sm">
+                              <MessageSquare className="w-2 h-2 sm:w-3 sm:h-3 mr-1 sm:mr-2 flex-shrink-0" />
+                              <span className="truncate flex-1 text-xs">
                                 {formatChatTitle(chat)}
                               </span>
                               {chat.isPinned && (
-                                <Pin className="w-3 h-3 ml-1 text-yellow-500 fill-current" />
+                                <Pin className="w-2 h-2 sm:w-3 sm:h-3 ml-1 text-yellow-500 fill-current" />
                               )}
                             </div>
-                            <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                              <button
+                            <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-0.5 sm:ml-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 onClick={(e) => handleRenameChat(chat.id, e)}
-                                className="p-1 hover:bg-background rounded"
-                                title="🎯 Rename Query"
+                                className="p-0.5 sm:p-1"
                               >
-                                <Edit3 className="w-3 h-3" />
-                              </button>
-                              <button
+                                <Edit3 className="w-2 h-2 sm:w-3 sm:h-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 onClick={(e) => handlePinChat(chat.id, e)}
-                                className="p-1 hover:bg-background rounded"
-                                title={
-                                  chat.isPinned
-                                    ? "🔒 Unpin chat"
-                                    : "🎯 Pin chat"
-                                }
+                                className="p-0.5 sm:p-1"
                               >
-                                <Pin
-                                  className={`w-3 h-3 ${chat.isPinned ? "text-yellow-500 fill-current" : ""}`}
-                                />
-                              </button>
-                              <button
+                                <Pin className="w-2 h-2 sm:w-3 sm:h-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 onClick={(e) => handleDeleteChat(chat.id, e)}
-                                className="p-1 hover:bg-background rounded text-red-500"
-                                title="🔒 Delete Queries"
+                                className="p-0.5 sm:p-1 text-red-500 hover:text-red-700"
                               >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
+                                <Trash2 className="w-2 h-2 sm:w-3 sm:h-3" />
+                              </Button>
                             </div>
                           </div>
                         </SidebarMenuButton>

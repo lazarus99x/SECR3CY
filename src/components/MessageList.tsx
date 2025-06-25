@@ -28,8 +28,8 @@ export const MessageList = ({
 }: MessageListProps) => {
   return (
     <ScrollArea className="flex-1 h-full">
-      <div className="p-2 sm:p-4 max-w-4xl mx-auto w-full">
-        <div className="space-y-4 sm:space-y-6 pb-6 sm:pb-6">
+      <div className="p-2 sm:p-4 max-w-6xl mx-auto w-full">
+        <div className="space-y-3 sm:space-y-6 pb-4 sm:pb-6">
           {messages.map((message) => (
             <MessageBubble
               key={message.id}

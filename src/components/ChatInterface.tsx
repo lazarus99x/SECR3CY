@@ -30,15 +30,19 @@ export const ChatInterface = ({
   onNotesUpdate,
 }: ChatInterfaceProps) => {
   const { user } = useUser();
-  const [messages, setMessages] = useState<Message[]>(currentChat.messages);
+  const [messages, setMessages] = useState<Message[]>(
+    currentChat?.messages || []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<ChatMode>("CHAT");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMessages(currentChat.messages);
-  }, [currentChat.id, currentChat.messages]);
+    if (currentChat) {
+      setMessages(currentChat.messages);
+    }
+  }, [currentChat]);
 
   // Improved scroll to bottom function
   const scrollToBottom = (behavior: "smooth" | "instant" = "smooth") => {
@@ -72,6 +76,8 @@ export const ChatInterface = ({
   }, [isLoading]);
 
   const updateChatInStorage = (updatedMessages: Message[]) => {
+    if (!currentChat) return currentChat;
+
     const updatedChat: Chat = {
       ...currentChat,
       messages: updatedMessages,
@@ -190,22 +196,31 @@ export const ChatInterface = ({
       <ChatHeader onClearChat={handleClearChat} />
 
       {/* Mode Selector */}
-      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800">
+      <div className="px-2 sm:px-4 py-2 border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
         <Tabs value={mode} onValueChange={(value: ChatMode) => setMode(value)}>
-          <TabsList>
-            <TabsTrigger value="CHAT" className="flex items-center gap-2">
-              <Bot className="w-4 h-4" />
-              Convo Mode
+          <TabsList className="flex w-full">
+            <TabsTrigger
+              value="CHAT"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+            >
+              <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Convo</span> Mode
               <span className="ml-1 text-xs text-gray-400">(5)</span>
             </TabsTrigger>
-            <TabsTrigger value="SEARCH" className="flex items-center gap-2">
-              <Search className="w-4 h-4" />
-              Research Mode
+            <TabsTrigger
+              value="SEARCH"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+            >
+              <Search className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Research</span> Mode
               <span className="ml-1 text-xs text-gray-400">(15)</span>
             </TabsTrigger>
-            <TabsTrigger value="GHOST" className="flex items-center gap-2">
-              <Ghost className="w-4 h-4" />
-              Ghost Mode
+            <TabsTrigger
+              value="GHOST"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+            >
+              <Ghost className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Ghost</span> Mode
               <span className="ml-1 text-xs text-gray-400">(10)</span>
             </TabsTrigger>
           </TabsList>
@@ -221,8 +236,8 @@ export const ChatInterface = ({
           messages={messages}
           isLoading={isLoading}
           theme={theme}
-          currentChatId={currentChat.id}
-          currentChatTitle={currentChat.title}
+          currentChatId={currentChat?.id || ""}
+          currentChatTitle={currentChat?.title || "New Chat"}
           onNotesUpdate={onNotesUpdate}
         />
         <div ref={messagesEndRef} />
